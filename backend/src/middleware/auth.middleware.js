@@ -72,7 +72,7 @@ export const checkAdmin = async (req,res,next) =>{
             }
         })
 
-        if(!user || !user.role!=="ADMIN"){
+        if(!user || user.role!=="ADMIN"){
             return res.status(403).json({
                 message:"Forbidden: You are not an admin"
             })

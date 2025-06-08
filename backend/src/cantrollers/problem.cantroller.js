@@ -1,5 +1,5 @@
 import {db} from "../libs/db.js"
-import { getJudge0LanguageId } from "../libs/judge0.lib.js"
+import { getJudge0LanguageId,submitBatch,poolBatchResult } from "../libs/judge0.lib.js"
 
 export const createProblem =async (req,res )=>{
 
@@ -20,6 +20,8 @@ export const createProblem =async (req,res )=>{
 
         for(const [language,solutionCode] of Object.entries(codeSnippets)){
         const languageId= getJudge0LanguageId(language)
+        console.log("languageId----",languageId);
+        
 
         if(!languageId){
             return res.status(400).json({
@@ -44,7 +46,9 @@ export const createProblem =async (req,res )=>{
         const results =await poolBatchResult(tokens);
 
         for(let i=0;i<results.length;i++){
+            
             const result=results[i];
+            console.log("results----",result);
              
             if(result.status.id!==3){
                 return res.status(400).json({
@@ -52,6 +56,7 @@ export const createProblem =async (req,res )=>{
                 })
             }
         }
+    }
 
         const newProblem =await db.problem.create( 
             {
@@ -62,12 +67,27 @@ export const createProblem =async (req,res )=>{
             }
         )
 
-        res.status(201).json(newProblem)
-
-    }
-    } catch (error) {
+        console.log("Problem created successfuly");
         
-    }
+
+        res.status(201).json({
+            message:"Problem created successfully",
+            problem:newProblem,
+            success:true
+        })
+
+    
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            error:"Error in creating problem",
+            success:false
+        })
+        
+        
+    }  
      
 }
 

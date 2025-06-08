@@ -1,23 +1,31 @@
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config("../../.env");
 
- export const getJudge0LanguageId =(language) =>{
-    const languageMap={
-        "PHYTHON":71,
+ export const getJudge0LanguageId = (language) =>{
+    const languageMap = {
+        "PYTHON":71,
         "JAVA":62,
         "JAVASCRIPT":63,
-        "CPP":54,
     }
 
-    return languageMap[language.toUpperCase()] || null;
+    return languageMap[language.toUpperCase()]
  }
 
  export const submitBatch=async (submissions) =>{
-    const {data} =await axios.post(`${process.env.JUDGE0_API_URL}/submissions/batch?batch64_encoded=false`,{ 
+   
+    try {
+         const {data} =await axios.post(`${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false`,{ 
         submissions
     })
 
     console.log("Submission Results: ",data);
     return data; //[{token},{token},{token}]
+    } catch (error) {
+        console.log(`error in submitBatch`,error);
+        
+        
+    }
 
     
  }
@@ -37,9 +45,10 @@ import axios from "axios";
         const results=data.submissions; //status code like[ {"run time error"},{"time limit exceeded"}]
         
         //every => when all submissions true returns true else false
-        const isAllDone=results.every(
-            (r)=>r.status.id !== 1 && r.starus.id !== 2
+        const isAllDone = results.every(
+            (r)=> r.status.id !== 1 && r.status.id !== 2
         )
+
 
         if(isAllDone){
             return results
