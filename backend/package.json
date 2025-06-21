@@ -18,5 +18,8 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.7.0"
+  },
+  "devDependencies": {
+    "prisma-erd-generator": "^2.0.4"
   }
 }
